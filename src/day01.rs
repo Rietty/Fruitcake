@@ -1,5 +1,4 @@
 // https://adventofcode.com/2022/day/1
-use itertools::sorted;
 
 pub fn solve(data: &[String]) -> (i32, i32) {
     // For the data, sum each set of numbers separated by an empty line and store them in an array.
