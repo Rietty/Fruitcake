@@ -15,9 +15,9 @@ pub fn solve(data: &[String]) -> (i32, i32) {
         }
     }
 
+    sums.sort();
+    sums.reverse();
+
     // Return the largest, and then the sum of 3 largest values in the vector.
-    (
-        *sums.iter().max().expect("Panic!"),
-        sorted(sums).rev().take(3).sum(),
-    )
+    (sums[0], sums.iter().take(3).sum())
 }
