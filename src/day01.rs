@@ -20,3 +20,8 @@ pub fn solve(data: &[String]) -> (i32, i32) {
     // Return the largest, and then the sum of 3 largest values in the vector.
     (sums[0], sums.iter().take(3).sum())
 }
+
+pub fn run() {
+    let res = solve(&crate::library::read_file("data/day01.txt"));
+    println!("Day 01:\nStar 1: {}\nStar 2: {}\n", res.0, res.1);
+}
