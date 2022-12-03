@@ -4,6 +4,7 @@ use std::env;
 // Load modules for my solutions.
 mod day01;
 mod day02;
+mod day03;
 
 mod library;
 
@@ -28,7 +29,7 @@ fn main() {
     match day {
         "1" => day01::run(),
         "2" => day02::run(),
-        // "3" => day03::run(),
+        "3" => day03::run(),
         // "4" => day04::run(),
         // "5" => day05::run(),
         // "6" => day06::run(),
@@ -54,7 +55,7 @@ fn main() {
         "*" => {
             day01::run();
             day02::run();
-            // day03::run();
+            day03::run();
             // day04::run();
             // day05::run();
             // day06::run();
