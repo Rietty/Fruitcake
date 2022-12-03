@@ -10,7 +10,7 @@ pub fn solve(data: &[String]) -> (i32, i32) {
     let x = b'X';
 
     for line in data {
-        // Destrucure the line into 2 characters and remove any whitespace.
+        // Destructure the line into 2 characters and remove any whitespace.
         let (c1, c2) = line.split_at(1);
         let c2 = c2.trim();
 
