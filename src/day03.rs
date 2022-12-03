@@ -4,18 +4,18 @@ pub fn solve(data: &[String]) -> (i32, i32) {
     let mut s1: i32 = 0;
     let mut s2: i32 = 0;
 
-    for (a, b) in data
-        .iter()
-        .map(|s| s.split_at(s.len() / 2))
-        .collect::<Vec<_>>()
-        .iter()
-    {
-        s1 += get_value(a.chars().find(|c| b.contains(*c)).unwrap());
-    }
-
     for i in (0..data.len()).step_by(3) {
         // Make a tuple of 3 lines.
         let (a, b, c) = (&data[i], &data[i + 1], &data[i + 2]);
+
+        // Split each line into 2 parts and then get the s1 value for each line.
+        let (a1, a2) = a.split_at(a.len() / 2);
+        let (b1, b2) = b.split_at(b.len() / 2);
+        let (c1, c2) = c.split_at(c.len() / 2);
+
+        s1 += get_value(a1.chars().find(|c| a2.contains(*c)).unwrap());
+        s1 += get_value(b1.chars().find(|c| b2.contains(*c)).unwrap());
+        s1 += get_value(c1.chars().find(|c| c2.contains(*c)).unwrap());
 
         // Get the one char that is in all 3 lines.
         s2 += get_value(
