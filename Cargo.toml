@@ -9,3 +9,8 @@ edition = "2021"
 nom = "7.1.1"
 itertools = "0.10.5"
 maplit = "1.0.2"
+criterion = "0.4.0"
+
+[[bench]]
+name = "benchmark"
+harness = false

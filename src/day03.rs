@@ -37,7 +37,14 @@ fn get_value(c: char) -> i32 {
     }
 }
 
+#[allow(dead_code)]
 pub fn run() {
     let res = solve(&crate::library::read_file("data/day03.txt"));
     println!("Day 03:\nStar 1: {}\nStar 2: {}\n", res.0, res.1);
+}
+
+#[allow(dead_code)]
+pub fn benchmark(c: &mut criterion::Criterion) {
+    let data = crate::library::read_file("data/day03.txt");
+    c.bench_function("Day 03", |b| b.iter(|| solve(&data)));
 }
