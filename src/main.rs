@@ -5,6 +5,7 @@ use std::env;
 mod day01;
 mod day02;
 mod day03;
+mod day04;
 
 mod library;
 
@@ -30,7 +31,7 @@ fn main() {
         "1" => day01::run(),
         "2" => day02::run(),
         "3" => day03::run(),
-        // "4" => day04::run(),
+        "4" => day04::run(),
         // "5" => day05::run(),
         // "6" => day06::run(),
         // "7" => day07::run(),
@@ -56,7 +57,7 @@ fn main() {
             day01::run();
             day02::run();
             day03::run();
-            // day04::run();
+            day04::run();
             // day05::run();
             // day06::run();
             // day07::run();
