@@ -18,36 +18,20 @@ pub fn read_file(path: &str) -> Vec<String> {
     lines
 }
 
-#[derive(Debug)]
-pub struct Pair {
-    pub x: i32,
-    pub y: i32,
+// Function to split a string into a tuple using a given delimiter.
+pub fn split_string(s: &str, delim: &str) -> (String, String) {
+    let mut split = s.split(delim);
+    let first = split.next().unwrap().to_string();
+    let second = split.next().unwrap().to_string();
+    (first, second)
 }
 
-// Function to read a file and return a vector that contains 2 pairs.
-pub fn read_file_vttuples(path: &str) -> Vec<(Pair, Pair)> {
-    // Read lines from file, of format #-#,#-#.
-    // Put each line into a vector of tuples of tuples.
-    let mut ranges: Vec<(Pair, Pair)> = vec![];
-    if let Ok(fs) = read_lines(path) {
-        for line in fs.flatten() {
-            let mut split = line.split(',');
-            let mut split2 = split.next().unwrap().split('-');
-            let mut split3 = split.next().unwrap().split('-');
-            ranges.push((
-                Pair {
-                    x: split2.next().unwrap().parse().unwrap(),
-                    y: split2.next().unwrap().parse().unwrap(),
-                },
-                Pair {
-                    x: split3.next().unwrap().parse().unwrap(),
-                    y: split3.next().unwrap().parse().unwrap(),
-                },
-            ));
-        }
-    }
-
-    ranges
+// Function that will take a line of data and use split_string to split it into two tuples of strings.
+pub fn split_line(s: &str, fdelim: &str, sdelim: &str) -> ((String, String), (String, String)) {
+    let mut split = s.split(fdelim);
+    let first = split_string(split.next().unwrap(), sdelim);
+    let second = split_string(split.next().unwrap(), sdelim);
+    (first, second)
 }
 
 // Read lines from a file at a given file-name.
