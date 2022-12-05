@@ -51,18 +51,20 @@ pub fn solve(data: &[(i32, i32, i32)]) -> (String, String) {
 }
 
 fn parse(data: &[String]) -> Vec<(i32, i32, i32)> {
+    // Data comes in a series of lines. Split into two different vectors of strings based on the first empty line.
+    let (_header, data) = data.split_at(data.iter().position(|s| s.is_empty()).unwrap());
+
     // Read in the data and return a vector of (i32, i32, i32), of the numbers in the data.
     let mut numbers = Vec::new();
-    for line in data {
-        // Split the line into a vector of strings.
-        let mut split = line.split(' ');
 
-        split.next();
-        let a = split.next().unwrap().parse::<i32>().unwrap();
-        split.next();
-        let b = split.next().unwrap().parse::<i32>().unwrap();
-        split.next();
-        let c = split.next().unwrap().parse::<i32>().unwrap();
+    // Iterate over the vector of strings, skipping the first line.
+    for line in data.iter().skip(1) {
+        // Split the line into a vector of strings.
+        let split: Vec<&str> = line.split(' ').collect();
+
+        let a = split[1].parse::<i32>().unwrap();
+        let b = split[3].parse::<i32>().unwrap();
+        let c = split[5].parse::<i32>().unwrap();
 
         // Push the tuple onto the vector.
         numbers.push((a, b, c));
