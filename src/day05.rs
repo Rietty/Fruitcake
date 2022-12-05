@@ -1,19 +1,6 @@
 // https://adventofcode.com/2022/day/5
 
-pub fn solve(data: &[(i32, i32, i32)]) -> (String, String) {
-    // Just hard-code initial values
-    let mut cr = vec![
-        vec!['B', 'Q', 'C'],
-        vec!['R', 'Q', 'W', 'Z'],
-        vec!['B', 'M', 'R', 'L', 'V'],
-        vec!['C', 'Z', 'H', 'V', 'T', 'W'],
-        vec!['D', 'Z', 'H', 'B', 'N', 'V', 'G'],
-        vec!['H', 'N', 'P', 'C', 'J', 'F', 'V', 'Q'],
-        vec!['D', 'G', 'T', 'R', 'W', 'Z', 'S'],
-        vec!['C', 'G', 'H', 'N', 'B', 'W', 'Z', 'P'],
-        vec!['N', 'J', 'B', 'M', 'W', 'Q', 'F', 'P'],
-    ];
-
+pub fn solve(mut cr: Vec<Vec<char>>, data: &[(i32, i32, i32)]) -> (String, String) {
     // Create a copy of the crates for the second part
     let mut cr2 = cr.clone();
 
@@ -50,9 +37,30 @@ pub fn solve(data: &[(i32, i32, i32)]) -> (String, String) {
     (p1, p2)
 }
 
-fn parse(data: &[String]) -> Vec<(i32, i32, i32)> {
+#[allow(clippy::type_complexity)]
+fn parse(data: &[String]) -> (Vec<Vec<char>>, Vec<(i32, i32, i32)>) {
     // Data comes in a series of lines. Split into two different vectors of strings based on the first empty line.
-    let (_header, data) = data.split_at(data.iter().position(|s| s.is_empty()).unwrap());
+    let (header, data) = data.split_at(data.iter().position(|s| s.is_empty()).unwrap());
+
+    // Get rid of the last line in the header, then reverse the header.
+    let header = header[0..header.len()]
+        .iter()
+        .rev()
+        .map(|s| s.to_string())
+        .collect::<Vec<String>>();
+
+    // Create the initial crates.
+    let mut cr = vec![vec![]; header[0].split_whitespace().count()];
+
+    // For each line in header except first line.
+    for line in header[1..].iter() {
+        line.chars()
+            .skip(1)
+            .step_by(4)
+            .enumerate()
+            .filter(|(_, c)| *c != ' ')
+            .for_each(|(i, c)| cr[i].push(c));
+    }
 
     // Read in the data and return a vector of (i32, i32, i32), of the numbers in the data.
     let mut numbers = Vec::new();
@@ -69,17 +77,19 @@ fn parse(data: &[String]) -> Vec<(i32, i32, i32)> {
         // Push the tuple onto the vector.
         numbers.push((a, b, c));
     }
-    numbers
+
+    (cr, numbers)
 }
 
 #[allow(dead_code)]
 pub fn run() {
-    let res = solve(&parse(&crate::library::read_file("data/day05.txt")));
+    let (header, data) = &parse(&crate::library::read_file("data/day05.txt"));
+    let res = solve(header.to_vec(), data);
     println!("Day 05:\nStar 1: {}\nStar 2: {}\n", res.0, res.1);
 }
 
 #[allow(dead_code)]
 pub fn benchmark(c: &mut criterion::Criterion) {
-    let data = parse(&crate::library::read_file("data/day05.txt"));
-    c.bench_function("Day 05", |b| b.iter(|| solve(&data)));
+    let (header, data) = parse(&crate::library::read_file("data/day05.txt"));
+    c.bench_function("Day 05", |b| b.iter(|| solve(header.to_vec(), &data)));
 }
