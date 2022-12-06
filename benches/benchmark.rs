@@ -1,5 +1,4 @@
 // Benchmarking system for my Advent of Code solutions.
-use automation::include_days_with_paths;
 #[allow(unused_imports)]
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
@@ -8,7 +7,23 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 mod library;
 
 // Load modules for my solutions.
-include_days_with_paths!();
+#[path = "../src/day01.rs"]
+mod day01;
+
+#[path = "../src/day02.rs"]
+mod day02;
+
+#[path = "../src/day03.rs"]
+mod day03;
+
+#[path = "../src/day04.rs"]
+mod day04;
+
+#[path = "../src/day05.rs"]
+mod day05;
+
+#[path = "../src/day06.rs"]
+mod day06;
 
 criterion_group!(
     benches,
