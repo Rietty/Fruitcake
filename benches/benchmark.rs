@@ -22,13 +22,17 @@ mod day04;
 #[path = "../src/day05.rs"]
 mod day05;
 
+#[path = "../src/day06.rs"]
+mod day06;
+
 criterion_group!(
     benches,
     day01::benchmark,
     day02::benchmark,
     day03::benchmark,
     day04::benchmark,
-    day05::benchmark
+    day05::benchmark,
+    day06::benchmark,
 );
 
 criterion_main!(benches);
