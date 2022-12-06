@@ -3,31 +3,35 @@
 use itertools::Itertools;
 
 pub fn solve(data: &[String]) -> (i32, i32) {
-    // Get the data as a single string that we can iterate over.
     let s = &data[0];
-    (find_marker(s, 4), find_marker(s, 14))
+
+    let p1 = s
+        .chars()
+        .collect_vec()
+        .windows(4)
+        .take_while(|c| not_unique(c.iter().collect::<String>().as_str()))
+        .count() as i32;
+
+    let p2 = s
+        .chars()
+        .collect_vec()
+        .windows(14)
+        .take_while(|c| not_unique(c.iter().collect::<String>().as_str()))
+        .count() as i32;
+
+    (p1 + 4, p2 + 14)
 }
 
-fn find_marker(s: &str, size: usize) -> i32 {
-    *s.chars()
-        .collect_vec()
-        .windows(size)
-        .into_iter()
-        .enumerate()
-        .filter_map(|(i, c)| {
-            if unique_check(c.to_vec()) {
-                Some(i + size)
-            } else {
-                None
-            }
-        })
-        .collect_vec()
-        .first()
-        .unwrap() as i32
-}
-
-fn unique_check(c: Vec<char>) -> bool {
-    c.clone().into_iter().unique().collect_vec() == c
+fn not_unique(rng: &str) -> bool {
+    let mut _mask = 0;
+    for c in rng.chars() {
+        _mask |= 1 << (c as u64 - 'A' as u64);
+    }
+    let mut set = std::collections::HashSet::new();
+    for c in rng.chars() {
+        set.insert(c);
+    }
+    set.len() != rng.len()
 }
 
 #[allow(dead_code)]
