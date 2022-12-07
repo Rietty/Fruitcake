@@ -24,9 +24,9 @@ pub fn solve(data: &[((i32, i32), (i32, i32))]) -> (i32, i32) {
 fn parse(data: &[String]) -> Vec<((i32, i32), (i32, i32))> {
     data.iter()
         .map(|x| {
-            let mut parts = x.split(",");
-            let mut first = parts.next().unwrap().split("-");
-            let mut second = parts.next().unwrap().split("-");
+            let mut parts = x.split(',');
+            let mut first = parts.next().unwrap().split('-');
+            let mut second = parts.next().unwrap().split('-');
             let first = (
                 first.next().unwrap().parse::<i32>().unwrap(),
                 first.next().unwrap().parse::<i32>().unwrap(),

@@ -3,7 +3,7 @@
 // Imports
 #[allow(unused_imports)]
 use std::fs::File;
-use std::io::{self, BufRead, BufReader};
+use std::io::{self, BufRead};
 use std::path::Path;
 
 // Read a file from a given path and return a vector of strings.
