@@ -23,17 +23,17 @@ pub fn solve(data: &[((i32, i32), (i32, i32))]) -> (i32, i32) {
 
 fn parse(data: &[String]) -> Vec<((i32, i32), (i32, i32))> {
     data.iter()
-        .map(|x| crate::library::split_line(x, ",", "-"))
         .map(|x| {
-            let first = x.0;
-            let second = x.1;
+            let mut parts = x.split(",");
+            let mut first = parts.next().unwrap().split("-");
+            let mut second = parts.next().unwrap().split("-");
             let first = (
-                first.0.parse::<i32>().unwrap(),
-                first.1.parse::<i32>().unwrap(),
+                first.next().unwrap().parse::<i32>().unwrap(),
+                first.next().unwrap().parse::<i32>().unwrap(),
             );
             let second = (
-                second.0.parse::<i32>().unwrap(),
-                second.1.parse::<i32>().unwrap(),
+                second.next().unwrap().parse::<i32>().unwrap(),
+                second.next().unwrap().parse::<i32>().unwrap(),
             );
             (first, second)
         })

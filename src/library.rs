@@ -1,37 +1,19 @@
 // Module to handle/act as a library for all my various solutions.
 
 // Imports
+#[allow(unused_imports)]
 use std::fs::File;
-use std::io::{self, BufRead};
+use std::io::{self, BufRead, BufReader};
 use std::path::Path;
 
 // Read a file from a given path and return a vector of strings.
 #[allow(unused)]
 pub fn read_file(path: &str) -> Vec<String> {
-    // Print path for debugging.
-    let mut lines: Vec<String> = vec![];
-    if let Ok(fs) = read_lines(path) {
-        for line in fs.flatten() {
-            lines.push(line);
-        }
+    if let Ok(lines) = read_lines(path) {
+        lines.map(|line| line.unwrap()).collect()
+    } else {
+        panic!("Could not read file: {}", path);
     }
-    lines
-}
-
-// Function to split a string into a tuple using a given delimiter.
-pub fn split_string(s: &str, delim: &str) -> (String, String) {
-    let mut split = s.split(delim);
-    let first = split.next().unwrap().to_string();
-    let second = split.next().unwrap().to_string();
-    (first, second)
-}
-
-// Function that will take a line of data and use split_string to split it into two tuples of strings.
-pub fn split_line(s: &str, fdelim: &str, sdelim: &str) -> ((String, String), (String, String)) {
-    let mut split = s.split(fdelim);
-    let first = split_string(split.next().unwrap(), sdelim);
-    let second = split_string(split.next().unwrap(), sdelim);
-    (first, second)
 }
 
 // Read lines from a file at a given file-name.
