@@ -6,33 +6,18 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 #[path = "../src/library.rs"]
 mod library;
 
-// Load modules for my solutions.
-#[path = "../src/day01.rs"]
-mod day01;
-
-#[path = "../src/day02.rs"]
-mod day02;
-
-#[path = "../src/day03.rs"]
-mod day03;
-
-#[path = "../src/day04.rs"]
-mod day04;
-
-#[path = "../src/day05.rs"]
-mod day05;
-
-#[path = "../src/day06.rs"]
-mod day06;
+// Load the solutions folder mod.rs
+#[path = "../src/solutions/mod.rs"]
+mod solutions;
 
 criterion_group!(
     benches,
-    day01::benchmark,
-    day02::benchmark,
-    day03::benchmark,
-    day04::benchmark,
-    day05::benchmark,
-    day06::benchmark,
+    solutions::day01::benchmark,
+    solutions::day02::benchmark,
+    solutions::day03::benchmark,
+    solutions::day04::benchmark,
+    solutions::day05::benchmark,
+    solutions::day06::benchmark,
 );
 
 criterion_main!(benches);
