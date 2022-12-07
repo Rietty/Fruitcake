@@ -1,5 +1,8 @@
 // https://adventofcode.com/2022/day/7
 
+use std::collections::HashMap;
+use std::path::PathBuf;
+
 pub fn solve(data: &[String]) -> (i32, i32) {
     // Create a vector to store the current directory-path we're in.
     let mut path = Vec::new();
@@ -14,22 +17,25 @@ pub fn solve(data: &[String]) -> (i32, i32) {
         }
 
         // Tokenize our line.
-        let tokens: Vec<_> = line.split_whitespace().collect();
+        let tokens: Vec<&str> = line.split_whitespace().collect();
 
         // Match for either the change directories, or on the file size + name. Can match an entire vector at once.
-        match tokens[..] { // Really cool syntax to match an array's parts all at once.
+        match tokens[..] {
+            // Really cool syntax to match an array's parts all at once.
             // If we leave a directory, pop that out of our path vector.
             ["$", "cd", ".."] => {
                 path.pop();
-            } 
+            }
 
             // Need to do next part second because if you put it before other it causes issues due to the capture variable resulting in unreached statements in the match expression.
-            ["$", "cd", name] => { // The random value can be captured into name variable. Kinda like a regex.
-                path.push(name); 
+            ["$", "cd", name] => {
+                // The random value can be captured into name variable. Kinda like a regex.
+                path.push(name);
             }
 
             // If we have a file, that is a size and then file_name we can just add the size to the hash-map with the key as a collection of the path.
-            [size, _name] => { // Don't need _name, but use variable since it can be discarded and changed.
+            [size, _name] => {
+                // Don't need _name, but use variable since it can be discarded and changed.
                 let size: i32 = size.parse().unwrap();
                 // For each path, that is for example we have something like dev/dir/a/b/c, we want to add the size at each step, so each directory always reflects the true size.
                 for i in 0..path.len() {
@@ -38,18 +44,26 @@ pub fn solve(data: &[String]) -> (i32, i32) {
                 }
             }
 
-            _ => { // Do nothing, every case is accounted for.
-                println!("Merry Christmas!"); 
-            } 
+            _ => {}
         };
     }
 
     // Sum of all directories under 100k. Need to look into how I can make the numbers easier to read.
-    let p1 = dir_sizes.clone().into_values().filter(|s| *s <= 100000).sum();
+    // Clone the hashmap so we can iterate over it twice.
+    // The _ is for reading numbers in easily.
+    let p1 = dir_sizes
+        .clone()
+        .into_values()
+        .filter(|s| *s <= 100_000)
+        .sum();
 
     // Find and delete the smallest available directory that will result in the space needed.
-    let usable = 70000000 - dir_sizes.get(&PathBuf::from("/")).unwrap();
-    let p2 = dir_sizes.into_values().filter(|s| usable + s >= 30000000).min().unwrap();
+    let usable = 70_000_000 - dir_sizes.get(&PathBuf::from("/")).unwrap();
+    let p2 = dir_sizes
+        .into_values()
+        .filter(|s| usable + s >= 30_000_000)
+        .min()
+        .unwrap();
 
     (p1, p2)
 }
