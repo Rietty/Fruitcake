@@ -17,6 +17,7 @@ pub fn solve(data: &Vec<Vec<i32>>) -> (i32, i32) {
                     break;
                 }
             }
+            
             for k in (j + 1)..r.len() {
                 if data[i][k] >= tree {
                     visible_right = false;
@@ -30,6 +31,7 @@ pub fn solve(data: &Vec<Vec<i32>>) -> (i32, i32) {
                     break;
                 }
             }
+            
             for k in (i + 1)..data.len() {
                 if data[k][j] >= tree {
                     visible_bottom = false;
