@@ -4,10 +4,8 @@ use std::collections::HashMap;
 use std::path::PathBuf;
 
 pub fn solve(data: &[String]) -> (i32, i32) {
-    // Create a vector to store the current directory-path we're in.
+    // Create a vector to store the current directory-path we're in, hash-map to store the size of each directory.
     let mut path = Vec::new();
-
-    // Using a hashmap to map a path to a given size, initially I had a string but using a PathBuf provides more power and is easier to use.
     let mut dir_sizes: HashMap<PathBuf, i32> = HashMap::new();
 
     for line in data {
@@ -16,11 +14,8 @@ pub fn solve(data: &[String]) -> (i32, i32) {
             continue;
         }
 
-        // Tokenize our line.
-        let tokens: Vec<&str> = line.split_whitespace().collect();
-
         // Match for either the change directories, or on the file size + name. Can match an entire vector at once.
-        match tokens[..] {
+        match line.split_whitespace().collect::<Vec<&str>>()[..] {
             // Really cool syntax to match an array's parts all at once.
             // If we leave a directory, pop that out of our path vector.
             ["$", "cd", ".."] => {
@@ -39,8 +34,8 @@ pub fn solve(data: &[String]) -> (i32, i32) {
                 let size: i32 = size.parse().unwrap();
                 // For each path, that is for example we have something like dev/dir/a/b/c, we want to add the size at each step, so each directory always reflects the true size.
                 for i in 0..path.len() {
-                    let p = PathBuf::from_iter(&path[..=i]);
-                    *dir_sizes.entry(p).or_insert(0) += size; // So access entry, if it doesn't exist init it to 0. Then add the size to it.
+                    let p = PathBuf::from_iter(&path[..=i]); // Build a path from the path vector so we can use it as a key.
+                    *dir_sizes.entry(p).or_insert(0) += size; // So access entry, if it doesn't exist init it to 0.
                 }
             }
 
