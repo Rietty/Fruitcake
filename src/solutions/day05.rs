@@ -93,3 +93,23 @@ pub fn benchmark(c: &mut criterion::Criterion) {
     let (header, data) = parse(&crate::library::read_file("data/day05.txt"));
     c.bench_function("Day 05", |b| b.iter(|| solve(header.to_vec(), &data)));
 }
+
+#[cfg(test)]
+mod tests {
+    #[allow(unused_imports)]
+    use super::*;
+
+    #[test]
+    fn part1() {
+        let (header, data) = &parse(&crate::library::read_file("testdata/day05.txt"));
+        let res = solve(header.to_vec(), data);
+        assert_eq!(res.0, "CMZ");
+    }
+
+    #[test]
+    fn part2() {
+        let (header, data) = &parse(&crate::library::read_file("testdata/day05.txt"));
+        let res = solve(header.to_vec(), data);
+        assert_eq!(res.1, "MCD");
+    }
+}

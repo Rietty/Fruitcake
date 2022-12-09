@@ -100,3 +100,21 @@ pub fn benchmark(c: &mut criterion::Criterion) {
     let data = parse(&crate::library::read_file("data/day08.txt"));
     c.bench_function("Day 08", |b| b.iter(|| solve(&data)));
 }
+
+#[cfg(test)]
+mod tests {
+    #[allow(unused_imports)]
+    use super::*;
+
+    #[test]
+    fn part1() {
+        let res = solve(&parse(&crate::library::read_file("testdata/day08.txt")));
+        assert_eq!(res.0, 21);
+    }
+
+    #[test]
+    fn part2() {
+        let res = solve(&parse(&crate::library::read_file("testdata/day08.txt")));
+        assert_eq!(res.1, 8);
+    }
+}

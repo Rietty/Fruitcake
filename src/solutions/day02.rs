@@ -36,3 +36,21 @@ pub fn benchmark(c: &mut criterion::Criterion) {
     let data = crate::library::read_file("data/day02.txt");
     c.bench_function("Day 02", |b| b.iter(|| solve(&data)));
 }
+
+#[cfg(test)]
+mod tests {
+    #[allow(unused_imports)]
+    use super::*;
+
+    #[test]
+    fn part1() {
+        let res = solve(&crate::library::read_file("testdata/day02.txt"));
+        assert_eq!(res.0, 15);
+    }
+
+    #[test]
+    fn part2() {
+        let res = solve(&crate::library::read_file("testdata/day02.txt"));
+        assert_eq!(res.1, 12);
+    }
+}
