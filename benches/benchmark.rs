@@ -20,7 +20,7 @@ criterion_group!(
     solutions::day06::benchmark,
     solutions::day07::benchmark,
     solutions::day08::benchmark,
-    // solutions::day09::benchmark,
+    solutions::day09::benchmark,
     // solutions::day10::benchmark,
     // solutions::day11::benchmark,
     // solutions::day12::benchmark,
