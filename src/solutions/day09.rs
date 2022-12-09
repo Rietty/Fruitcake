@@ -11,17 +11,15 @@ const DOWN: (i32, i32) = (0, -1);
 
 // Rope structure that contains postion of the head and tail.
 struct Rope {
-    head: (i32, i32),
-    tail: (i32, i32),
+    knots: Vec<(i32, i32)>,
     visited_positions: HashSet<(i32, i32)>,
 }
 
 // Implement the rope structure.
 impl Rope {
-    fn new() -> Rope {
+    fn new(size: usize) -> Rope {
         Rope {
-            head: (0, 0),
-            tail: (0, 0),
+            knots: vec![(0, 0); size],
             visited_positions: HashSet::new(),
         }
     }
@@ -29,26 +27,28 @@ impl Rope {
     // Move the head, and then the tail accordingly.
     fn move_dir(&mut self, dir: (i32, i32)) {
         // Modify the head position by adding the direction vector.
-        self.head.0 += dir.0;
-        self.head.1 += dir.1;
+        self.knots[0].0 += dir.0;
+        self.knots[0].1 += dir.1;
 
-        if self
-            .head
-            .0
-            .abs_diff(self.tail.0)
-            .max(self.head.1.abs_diff(self.tail.1))
-            > 1
-        {
-            match self.head.0.cmp(&self.tail.0) {
-                std::cmp::Ordering::Less => self.tail.0 -= 1,
-                std::cmp::Ordering::Greater => self.tail.0 += 1,
-                std::cmp::Ordering::Equal => {}
-            }
+        // Set up a loop to move all the knots.
+        for i in 1..self.knots.len() {
+            // Make a head variable equal to the previous knot.
+            let head = self.knots[i - 1];
+            // Tail is the last knot.
+            let tail = self.knots[i];
 
-            match self.head.1.cmp(&self.tail.1) {
-                std::cmp::Ordering::Less => self.tail.1 -= 1,
-                std::cmp::Ordering::Greater => self.tail.1 += 1,
-                std::cmp::Ordering::Equal => {}
+            if head.0.abs_diff(tail.0).max(head.1.abs_diff(tail.1)) > 1 {
+                match head.0.cmp(&tail.0) {
+                    std::cmp::Ordering::Less => self.knots[i].0 -= 1,
+                    std::cmp::Ordering::Greater => self.knots[i].0 += 1,
+                    std::cmp::Ordering::Equal => {}
+                }
+
+                match head.1.cmp(&tail.1) {
+                    std::cmp::Ordering::Less => self.knots[i].1 -= 1,
+                    std::cmp::Ordering::Greater => self.knots[i].1 += 1,
+                    std::cmp::Ordering::Equal => {}
+                }
             }
         }
     }
@@ -74,7 +74,7 @@ impl Rope {
             // Move that many times using the move_dir function.
             for _ in 0..steps {
                 self.move_dir(dir);
-                self.mark_visited(self.tail);
+                self.mark_visited(self.knots[self.knots.len() - 1]);
             }
         }
     }
@@ -97,11 +97,19 @@ fn parse_movements(movements: &[String]) -> Vec<(char, i32)> {
 }
 
 pub fn solve(data: &[String]) -> (i32, i32) {
-    let mut rope = Rope::new();
+    let mut rope = Rope::new(2);
     let movements = parse_movements(data);
     rope.simulate(movements);
+
     let p1 = rope.visited_positions.len();
-    (p1.try_into().unwrap(), 0)
+
+    let mut rope = Rope::new(10);
+    let movements = parse_movements(data);
+    rope.simulate(movements);
+
+    let p2 = rope.visited_positions.len();
+
+    (p1.try_into().unwrap(), p2.try_into().unwrap())
 }
 
 // Parsing function takes a vector of strings with format like: D #, where D is a direction and # is a number.
