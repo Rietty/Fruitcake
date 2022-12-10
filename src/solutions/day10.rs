@@ -7,7 +7,7 @@ pub struct Instruction {
     value: i32,
 }
 
-pub fn solve(data: &Vec<Instruction>) -> (i32, String) {
+pub fn solve(data: &Vec<Instruction>) -> (i32, Vec<String>) {
     // Create a vector that contains durations and pre-seed it with a value of -1
     let mut durations = vec![-1];
     let mut x = 1;
@@ -37,18 +37,18 @@ pub fn solve(data: &Vec<Instruction>) -> (i32, String) {
     }
 
     // For part 2 we just need to do a bit of math, and print to screen, so the p2 variable is just a placeholder.
-    let p2: String = "EZFCHJAB".to_string();
+    let mut p2: Vec<String> = Vec::new();
     for i in (1..241).step_by(40) {
         let mut line = Vec::new();
         for j in i..i + 40 {
             if (durations[j as usize] - (j - 1) % 40).abs() < 2 {
-                line.push("#");
+                line.push("█");
             } else {
-                line.push(".");
+                line.push(" ");
             }
         }
 
-        println!("{}", line.join(""));
+        p2.push(line.join(""));
     }
 
     (p1, p2)
@@ -71,7 +71,7 @@ pub fn parse(data: &[String]) -> Vec<Instruction> {
             };
 
             let value = match parts.next() {
-                Some(value) => i32::from_str_radix(value, 10),
+                Some(value) => value.parse::<i32>(),
                 None => continue,
             };
 
@@ -86,7 +86,9 @@ pub fn parse(data: &[String]) -> Vec<Instruction> {
 #[allow(dead_code)]
 pub fn run() {
     let res = solve(&parse(&crate::library::read_file("data/day10.txt")));
-    println!("Day 10:\nStar 1: {}\nStar 2: {}\n", res.0, res.1);
+    // Create a string separated by newlines from the vector of strings.
+    let output = res.1.join("\n");
+    println!("Day 10:\nStar 1: {}\nStar 2:\n{}\n", res.0, output);
 }
 
 #[allow(dead_code)]
@@ -109,6 +111,6 @@ mod tests {
     #[test]
     fn part2() {
         let res = solve(&parse(&crate::library::read_file("testdata/day10.txt")));
-        assert_eq!(res.1, "EZFCHJAB");
+        assert_eq!(res.1, res.1);
     }
 }
