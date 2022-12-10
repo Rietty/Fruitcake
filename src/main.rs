@@ -31,7 +31,7 @@ fn main() {
         "7" => solutions::day07::run(),
         "8" => solutions::day08::run(),
         "9" => solutions::day09::run(),
-        // "10" => solutions::day10::run(),
+        "10" => solutions::day10::run(),
         // "11" => solutions::day11::run(),
         // "12" => solutions::day12::run(),
         // "13" => solutions::day13::run(),
@@ -57,7 +57,7 @@ fn main() {
             solutions::day07::run();
             solutions::day08::run();
             solutions::day09::run();
-            // solutions::day10::run();
+            solutions::day10::run();
             // solutions::day11::run();
             // solutions::day12::run();
             // solutions::day13::run();
