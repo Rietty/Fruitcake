@@ -1,6 +1,6 @@
 // https://adventofcode.com/2022/day/16
 
-pub fn solve(data: &[String]) -> (i32, i32) {
+pub fn solve(_data: &[String]) -> (i32, i32) {
     (0, 0)
 }
 
