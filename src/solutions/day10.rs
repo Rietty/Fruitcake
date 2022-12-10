@@ -101,7 +101,7 @@ mod tests {
     #[test]
     fn part1() {
         let res = solve(&parse(&crate::library::read_file("testdata/day10.txt")));
-        assert_eq!(res.0, 0);
+        assert_eq!(res.0, 13140);
     }
 
     #[test]
