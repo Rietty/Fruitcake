@@ -1,13 +1,8 @@
 // https://adventofcode.com/2022/day/11
 
-// Imports
-#[allow(unused_imports)]
-use regex::Regex;
-
 #[derive(Debug, Clone)]
 pub struct Operation {
-    op1: String,
-    op2: String,
+    op: String,
     oper: char,
 }
 
@@ -25,8 +20,7 @@ impl Monkey {
         Monkey {
             worries: Vec::new(),
             operation: Operation {
-                op1: String::new(),
-                op2: String::new(),
+                op: String::new(),
                 oper: ' ',
             },
             test: vec![0, 0, 0],
@@ -54,15 +48,8 @@ pub fn calculate(monkeys: &mut Vec<Monkey>, iterations: i64, part: String) -> i6
         }
     };
 
-    // Vec to store the inspected counts of each monkey, size is of the monkeys vec, default value is 0.
     let mut inspected = vec![0; monkeys.len()];
-
-    // Part 2, we set the new worry to modulus of the product of all the values at test[0] for all monkeys.
-    let mut product = 1;
-    // Use an iterator to get the product of all the values at test[0].
-    for m in monkeys.iter() {
-        product *= m.test[0];
-    }
+    let product = monkeys.iter().fold(1, |acc, m| acc * m.test[0]);
 
     // Need to do iterations times.
     for _ in 0..iterations {
@@ -72,32 +59,18 @@ pub fn calculate(monkeys: &mut Vec<Monkey>, iterations: i64, part: String) -> i6
 
             // Iterate over the worries of the current monkey.
             for w in worries {
-                let op1 = if monkeys[i].operation.op1 == "old" {
+                let op = if monkeys[i].operation.op == "old" {
                     w
                 } else {
-                    monkeys[i].operation.op1.parse::<i64>().unwrap()
+                    monkeys[i].operation.op.parse::<i64>().unwrap()
                 };
 
-                let op2 = if monkeys[i].operation.op2 == "old" {
-                    w
-                } else {
-                    monkeys[i].operation.op2.parse::<i64>().unwrap()
-                };
+                let mut new_worry = calc_worry(w, op, monkeys[i].operation.oper);
 
-                let mut new_worry = calc_worry(op1, op2, monkeys[i].operation.oper);
-
-                // Based on the part, do different things.
-                match part.as_str() {
-                    "1" => {
-                        // Part 1, we just divide by 3.
-                        new_worry /= 3;
-                    }
-
-                    "2" => {
-                        new_worry %= product;
-                    }
-
-                    _ => panic!("Invalid part!"),
+                if part.as_str() == "1" {
+                    new_worry /= 3;
+                } else if part.as_str() == "2" {
+                    new_worry %= product;
                 }
 
                 if new_worry % monkeys[i].test[0] == 0 {
@@ -125,74 +98,46 @@ pub fn calculate(monkeys: &mut Vec<Monkey>, iterations: i64, part: String) -> i6
 pub fn parse(data: &[String]) -> Vec<Monkey> {
     // Parser will parse the data into a vector of monkeys.
     let mut monkeys: Vec<Monkey> = Vec::new();
-
-    // Regex to parse the data.
-    let re_monkey = Regex::new(r"Monkey (\d+):").unwrap();
-    let re_starting_items = Regex::new(r"Starting items: (\d+(, \d+)*)").unwrap();
-    let re_operation = Regex::new(r"Operation: (\w+) = (\w+) ([\*\+]) (\w+)").unwrap();
-    let re_test = Regex::new(r"Test: divisible by (\d+)").unwrap();
-    let re_if_true = Regex::new(r"If true: throw to monkey (\d+)").unwrap();
-    let re_if_false = Regex::new(r"If false: throw to monkey (\d+)").unwrap();
+    let mut line_num = 0;
 
     for line in data {
-        // If line is empty, skip it.
-        if line.is_empty() {
+        if line_num == 6 {
+            line_num = 0;
             continue;
         }
 
-        // If the line matches re_monkey, we create a new monkey.
-        if re_monkey.is_match(line) {
-            monkeys.push(Monkey::new());
-        }
+        let monkeys_len = monkeys.len();
 
-        // If the line matches re_starting_items, we parse the starting items, and add them to the worries of the last monkey.
-        if re_starting_items.is_match(line) {
-            let mut worries = Vec::new();
-            for cap in re_starting_items.captures_iter(line) {
-                for item in cap[1].split(", ") {
-                    worries.push(item.parse::<i64>().unwrap());
-                }
+        match line_num {
+            0 => {
+                monkeys.push(Monkey::new());
             }
 
-            let last_monkey = monkeys.len() - 1;
-            monkeys[last_monkey].worries = worries;
+            1 => {
+                let split = line.trim().split(' ').collect::<Vec<&str>>();
+                split.iter().skip(2).for_each(|s| {
+                    monkeys[monkeys_len - 1]
+                        .worries
+                        .push(s.replace(',', "").parse::<i64>().unwrap());
+                });
+            }
+
+            2 => {
+                let split = line.trim().split(' ').collect::<Vec<&str>>();
+                monkeys[monkeys_len - 1].operation.op = split[5].to_string();
+                monkeys[monkeys_len - 1].operation.oper = split[4].chars().next().unwrap();
+            }
+
+            3 | 4 | 5 => {
+                let split = line.trim().split(' ').collect::<Vec<&str>>();
+                monkeys[monkeys_len - 1].test[line_num - 3] =
+                    split[split.len() - 1].parse::<i64>().unwrap();
+            }
+
+            _ => panic!("Invalid line number!"),
         }
 
-        // If the line matches re_operation, we parse the operation.
-        if re_operation.is_match(line) {
-            let last_monkey = monkeys.len() - 1;
-            for cap in re_operation.captures_iter(line) {
-                monkeys[last_monkey].operation = Operation {
-                    op1: cap[2].to_string(),
-                    op2: cap[4].to_string(),
-                    oper: cap[3].chars().next().unwrap(),
-                };
-            }
-        }
-
-        // If the line matches re_test, we parse the test.
-        if re_test.is_match(line) {
-            let last_monkey = monkeys.len() - 1;
-            for cap in re_test.captures_iter(line) {
-                monkeys[last_monkey].test[0] = cap[1].parse::<i64>().unwrap();
-            }
-        }
-
-        // If the line matches re_if_true, we parse the if true.
-        if re_if_true.is_match(line) {
-            let last_monkey = monkeys.len() - 1;
-            for cap in re_if_true.captures_iter(line) {
-                monkeys[last_monkey].test[1] = cap[1].parse::<i64>().unwrap();
-            }
-        }
-
-        // If the line matches re_if_false, we parse the if false.
-        if re_if_false.is_match(line) {
-            let last_monkey = monkeys.len() - 1;
-            for cap in re_if_false.captures_iter(line) {
-                monkeys[last_monkey].test[2] = cap[1].parse::<i64>().unwrap();
-            }
-        }
+        line_num += 1;
     }
 
     monkeys
