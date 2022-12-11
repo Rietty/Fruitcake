@@ -16,7 +16,6 @@ pub struct Monkey {
     worries: Vec<i32>,
     operation: Operation,
     test: Vec<i32>,
-    inspected: i32,
 }
 
 // Implement a new monkey.
@@ -31,53 +30,83 @@ impl Monkey {
                 oper: ' ',
             },
             test: Vec::new(),
-            inspected: 0,
         }
     }
 }
 
 pub fn solve(_data: &[String]) -> (i32, i32) {
-    // Hardcode the input for now.
     let mut monkeys = vec![
         Monkey {
-            worries: vec![79, 98],
+            worries: vec![78, 53, 89, 51, 52, 59, 58, 85],
             operation: Operation {
                 op1: String::from("old"),
-                op2: String::from("19"),
+                op2: String::from("3"),
                 oper: '*',
             },
-            test: vec![23, 2, 3],
-            inspected: 0,
+            test: vec![5, 2, 7],
         },
         Monkey {
-            worries: vec![54, 65, 75, 74],
+            worries: vec![64],
+            operation: Operation {
+                op1: String::from("old"),
+                op2: String::from("7"),
+                oper: '+',
+            },
+            test: vec![2, 3, 6],
+        },
+        Monkey {
+            worries: vec![71, 93, 65, 82],
+            operation: Operation {
+                op1: String::from("old"),
+                op2: String::from("5"),
+                oper: '+',
+            },
+            test: vec![13, 5, 4],
+        },
+        Monkey {
+            worries: vec![67, 73, 95, 75, 56, 74],
+            operation: Operation {
+                op1: String::from("old"),
+                op2: String::from("8"),
+                oper: '+',
+            },
+            test: vec![19, 6, 0],
+        },
+        Monkey {
+            worries: vec![85, 91, 90],
+            operation: Operation {
+                op1: String::from("old"),
+                op2: String::from("4"),
+                oper: '+',
+            },
+            test: vec![11, 3, 1],
+        },
+        Monkey {
+            worries: vec![67, 96, 69, 55, 70, 83, 62],
+            operation: Operation {
+                op1: String::from("old"),
+                op2: String::from("2"),
+                oper: '*',
+            },
+            test: vec![3, 4, 1],
+        },
+        Monkey {
+            worries: vec![53, 86, 98, 70, 64],
             operation: Operation {
                 op1: String::from("old"),
                 op2: String::from("6"),
                 oper: '+',
             },
-            test: vec![19, 2, 0],
-            inspected: 0,
+            test: vec![7, 7, 0],
         },
         Monkey {
-            worries: vec![79, 60, 97],
+            worries: vec![88, 64],
             operation: Operation {
                 op1: String::from("old"),
                 op2: String::from("old"),
                 oper: '*',
             },
-            test: vec![13, 1, 3],
-            inspected: 0,
-        },
-        Monkey {
-            worries: vec![74],
-            operation: Operation {
-                op1: String::from("old"),
-                op2: String::from("3"),
-                oper: '+',
-            },
-            test: vec![17, 0, 1],
-            inspected: 0,
+            test: vec![17, 2, 5],
         },
     ];
 
@@ -90,58 +119,55 @@ pub fn solve(_data: &[String]) -> (i32, i32) {
         }
     };
 
+    // Vec to store the inspected counts of each monkey, size is of the monkeys vec, default value is 0.
+    let mut inspected = vec![0; monkeys.len()];
+
     // For loop to run 20 times.
     for _ in 0..20 {
-        // Create a clone of the monkeys, so we can modify them while we process the original.
-        let mut new_monkeys = monkeys.clone();
+        for i in 0..monkeys.len() {
+            // Clone the worries of the current monkey.
+            let worries = monkeys[i].worries.clone();
 
-        // Iterate over the current monkeys.
-        for (index, monkey) in monkeys.iter().enumerate() {
             // Iterate over the worries of the current monkey.
-            for worry in monkey.worries.iter() {
-                // Get the first operand, if it is "old", set it to the value of the worry, else parse it as an integer.
-                let op1 = if monkey.operation.op1 == "old" {
-                    *worry
+            for w in worries {
+                let op1 = if monkeys[i].operation.op1 == "old" {
+                    w
                 } else {
-                    monkey.operation.op1.parse::<i32>().unwrap()
+                    monkeys[i].operation.op1.parse::<i32>().unwrap()
                 };
 
-                // Get the second operand, if it is "old", set it to the value of the worry, else parse it as an integer.
-                let op2 = if monkey.operation.op2 == "old" {
-                    *worry
+                let op2 = if monkeys[i].operation.op2 == "old" {
+                    w
                 } else {
-                    monkey.operation.op2.parse::<i32>().unwrap()
+                    monkeys[i].operation.op2.parse::<i32>().unwrap()
                 };
 
-                // Calculate the new worry.
-                let new_worry = calc_worry(op1, op2, monkey.operation.oper);
+                let new_worry = calc_worry(op1, op2, monkeys[i].operation.oper);
 
-                // Divide by 3 and round down (floor) as an integer.
-                let new_worry = (new_worry as f32 / 3.0).floor() as i32;
+                let new_worry = new_worry / 3;
 
-                // Check if new_worry is divisible by monkey.test[0], if so, push it to the worries of monkey.test[1], else push it to the worries of monkey.test[2].
-                if new_worry % monkey.test[0] == 0 {
-                    new_monkeys[monkey.test[1] as usize].worries.push(new_worry);
+                if new_worry % monkeys[i].test[0] == 0 {
+                    let next_monkey = monkeys[i].test[1] as usize;
+                    monkeys[next_monkey].worries.push(new_worry);
                 } else {
-                    new_monkeys[monkey.test[2] as usize].worries.push(new_worry);
+                    let next_monkey = monkeys[i].test[2] as usize;
+                    monkeys[next_monkey].worries.push(new_worry);
                 }
 
-                // Print the test vector.
-                println!("Monkey {} : {:?}", index, monkey.test);
-
-                // Increment the inspected counter.
-                new_monkeys[index].inspected += 1;
+                inspected[i] += 1;
             }
 
-            // Clear the worries of the current monkey.
-            new_monkeys[index].worries.clear();
+            monkeys[i].worries.clear();
         }
-
-        // Set the monkeys to the new monkeys.
-        monkeys = new_monkeys;
     }
 
-    (0, 0)
+    // Sort the inspected vector.
+    inspected.sort();
+    // P1 is the highest value multiplied by the 2nd highest value.
+    let p1 = inspected[inspected.len() - 1] * inspected[inspected.len() - 2];
+    println!("{:?}", inspected);
+
+    (p1, 0)
 }
 
 pub fn _parse(_data: &[String]) -> Vec<Monkey> {
