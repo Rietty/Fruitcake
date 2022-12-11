@@ -4,14 +4,14 @@
 #[allow(unused_imports)]
 use regex::Regex;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Operation {
     op1: String,
     op2: String,
     oper: char,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Monkey {
     worries: Vec<i32>,
     operation: Operation,
@@ -21,6 +21,7 @@ pub struct Monkey {
 
 // Implement a new monkey.
 impl Monkey {
+    #[allow(dead_code)]
     pub fn new() -> Monkey {
         Monkey {
             worries: Vec::new(),
@@ -90,39 +91,54 @@ pub fn solve(_data: &[String]) -> (i32, i32) {
     };
 
     // For loop to run 20 times.
-    for i in 0..20 {
-        // Iterate over all the monkeys and print out their worries.
-        for m in monkeys.iter_mut().for_each(|m| {
-            m.worries.iter_mut().for_each(|w| {
-                let op = &m.operation;
+    for _ in 0..20 {
+        // Create a clone of the monkeys, so we can modify them while we process the original.
+        let mut new_monkeys = monkeys.clone();
 
-                let op1 = if op.op1 == "old" {
-                    *w
+        // Iterate over the current monkeys.
+        for (index, monkey) in monkeys.iter().enumerate() {
+            // Iterate over the worries of the current monkey.
+            for worry in monkey.worries.iter() {
+                // Get the first operand, if it is "old", set it to the value of the worry, else parse it as an integer.
+                let op1 = if monkey.operation.op1 == "old" {
+                    *worry
                 } else {
-                    op.op1.parse::<i32>().unwrap()
+                    monkey.operation.op1.parse::<i32>().unwrap()
                 };
 
-                let op2 = if op.op2 == "old" {
-                    *w
+                // Get the second operand, if it is "old", set it to the value of the worry, else parse it as an integer.
+                let op2 = if monkey.operation.op2 == "old" {
+                    *worry
                 } else {
-                    op.op2.parse::<i32>().unwrap()
+                    monkey.operation.op2.parse::<i32>().unwrap()
                 };
 
-                *w = calc_worry(op1, op2, op.oper);
+                // Calculate the new worry.
+                let new_worry = calc_worry(op1, op2, monkey.operation.oper);
 
-                m.inspected += 1;
+                // Divide by 3 and round down (floor) as an integer.
+                let new_worry = (new_worry as f32 / 3.0).floor() as i32;
 
-                w = (*w as f32 / 3.0).floor() as i32;
-                
-                let remainder = *w % m.test[0];
-                if remainder == 0 {
-                    monkeys[m.test[1] as usize].worries.push(*w);
+                // Check if new_worry is divisible by monkey.test[0], if so, push it to the worries of monkey.test[1], else push it to the worries of monkey.test[2].
+                if new_worry % monkey.test[0] == 0 {
+                    new_monkeys[monkey.test[1] as usize].worries.push(new_worry);
                 } else {
-                    monkeys[m.test[2] as usize].worries.push(*w);
+                    new_monkeys[monkey.test[2] as usize].worries.push(new_worry);
                 }
-            });
-            m.worries.clear();
-        });
+
+                // Print the test vector.
+                println!("Monkey {} : {:?}", index, monkey.test);
+
+                // Increment the inspected counter.
+                new_monkeys[index].inspected += 1;
+            }
+
+            // Clear the worries of the current monkey.
+            new_monkeys[index].worries.clear();
+        }
+
+        // Set the monkeys to the new monkeys.
+        monkeys = new_monkeys;
     }
 
     (0, 0)
