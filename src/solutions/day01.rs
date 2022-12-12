@@ -17,9 +17,6 @@ pub fn solve(data: &[String]) -> (i32, i32) {
     sums.sort();
     sums.reverse();
 
-    // Print the values in sums.
-    println!("{:?}", sums);
-
     // Return the largest, and then the sum of 3 largest values in the vector.
     (sums[0], sums.iter().take(3).sum())
 }
@@ -45,11 +42,13 @@ mod tests {
     fn part1() {
         let res = solve(&crate::library::read_file("testdata/day01.txt"));
         assert_eq!(res.0, 24000);
+        println!("Part 1: Expected: 24000, Actual: {}", res.0);
     }
 
     #[test]
     fn part2() {
         let res = solve(&crate::library::read_file("testdata/day01.txt"));
         assert_eq!(res.1, 45000);
+        println!("Part 2: Expected: 45000, Actual: {}", res.1);
     }
 }

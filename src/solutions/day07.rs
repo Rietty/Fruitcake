@@ -84,11 +84,13 @@ mod tests {
     fn part1() {
         let res = solve(&crate::library::read_file("testdata/day07.txt"));
         assert_eq!(res.0, 95437);
+        println!("Part 1: Expected: 95437, Actual: {}", res.0);
     }
 
     #[test]
     fn part2() {
         let res = solve(&crate::library::read_file("testdata/day07.txt"));
         assert_eq!(res.1, 24933642);
+        println!("Part 2: Expected: 24933642, Actual: {}", res.1);
     }
 }

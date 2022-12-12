@@ -104,6 +104,7 @@ mod tests {
         let (header, data) = &parse(&crate::library::read_file("testdata/day05.txt"));
         let res = solve(header.to_vec(), data);
         assert_eq!(res.0, "CMZ");
+        println!("Part 1: Expected: CMZ, Actual: {}", res.0);
     }
 
     #[test]
@@ -111,5 +112,6 @@ mod tests {
         let (header, data) = &parse(&crate::library::read_file("testdata/day05.txt"));
         let res = solve(header.to_vec(), data);
         assert_eq!(res.1, "MCD");
+        println!("Part 2: Expected: MCD, Actual: {}", res.1);
     }
 }
