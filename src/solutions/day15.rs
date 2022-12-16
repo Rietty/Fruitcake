@@ -49,7 +49,7 @@ pub fn solve(data: &Vec<(Point, Point)>) -> (i64, i64) {
         }
     }
 
-    // Create a vector of tuples that contain the (x, y, dist) coordiante of the scanner and their manhattan distance to the beacon.
+    // Create a vector of tuples that contain the (x, y, dist) coordinates of the scanner and their manhattan distance to the beacon.
     let mut vec = Vec::new();
     for (s, b) in data {
         vec.push((s.x, s.y, manhattan(s, b)));
