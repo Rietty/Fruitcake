@@ -12,7 +12,7 @@ pub fn read_file(path: &str) -> Vec<String> {
     if let Ok(lines) = read_lines(path) {
         lines.map(|line| line.unwrap()).collect()
     } else {
-        panic!("Could not read file: {}", path);
+        panic!("Could not read file: {path}");
     }
 }
 

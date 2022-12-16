@@ -1,11 +1,13 @@
 // https://adventofcode.com/2022/day/14
 
+use std::collections::HashSet;
+
 pub fn solve(data: &HashSet<(i32, i32)>) -> (i32, i32) {
     // Maximum depth, Set it to one higher than the maximum value in second part.
     let mut max_depth = 0;
 
     for p in data {
-        max_depth = std::cmp::max(p.1, max_depth); 
+        max_depth = std::cmp::max(p.1, max_depth);
     }
 
     max_depth += 1;
@@ -31,16 +33,13 @@ pub fn solve(data: &HashSet<(i32, i32)>) -> (i32, i32) {
             if !p1_data.contains(&(s.0, s.1 + 1)) {
                 s = (s.0, s.1 + 1);
                 continue;
-            } else {
-                if !p1_data.contains(&(s.0 - 1, s.1 + 1)) {
-                    s = (s.0 - 1, s.1 + 1);
-                    continue;
-                } else if !p1_data.contains(&(s.0 + 1, s.1 + 1)) {
-                    s = (s.0 + 1, s.1 + 1);
-                    continue;
-                }
+            } else if !p1_data.contains(&(s.0 - 1, s.1 + 1)) {
+                s = (s.0 - 1, s.1 + 1);
+                continue;
+            } else if !p1_data.contains(&(s.0 + 1, s.1 + 1)) {
+                s = (s.0 + 1, s.1 + 1);
+                continue;
             }
-
             p1_data.insert(s);
             break;
         }
@@ -63,14 +62,12 @@ pub fn solve(data: &HashSet<(i32, i32)>) -> (i32, i32) {
             if !p2_data.contains(&(s.0, s.1 + 1)) {
                 s = (s.0, s.1 + 1);
                 continue;
-            } else {
-                if !p2_data.contains(&(s.0 - 1, s.1 + 1)) {
-                    s = (s.0 - 1, s.1 + 1);
-                    continue;
-                } else if !p2_data.contains(&(s.0 + 1, s.1 + 1)) {
-                    s = (s.0 + 1, s.1 + 1);
-                    continue;
-                }
+            } else if !p2_data.contains(&(s.0 - 1, s.1 + 1)) {
+                s = (s.0 - 1, s.1 + 1);
+                continue;
+            } else if !p2_data.contains(&(s.0 + 1, s.1 + 1)) {
+                s = (s.0 + 1, s.1 + 1);
+                continue;
             }
 
             p2_data.insert(s);
@@ -78,25 +75,24 @@ pub fn solve(data: &HashSet<(i32, i32)>) -> (i32, i32) {
         }
     }
 
-
     (p1 as i32, p2 as i32)
 }
 
 pub fn parse(data: &[String]) -> HashSet<(i32, i32)> {
     // Parse as a pair of coordinates and add into basically a grid.
     let data = data
-    .iter()
-    .map(|s| s.trim().split(" -> ").map(String::from).collect::<Vec<_>>())
-    .map(|coord| {
-        coord
-            .iter()
-            .map(|s| {
-                let xy: Vec<&str> = s.split(",").collect::<Vec<_>>();
-                (xy[0].parse::<i32>().unwrap(), xy[1].parse::<i32>().unwrap())
-            })
-            .collect::<Vec<_>>()
-    })
-    .collect::<Vec<_>>();
+        .iter()
+        .map(|s| s.trim().split(" -> ").map(String::from).collect::<Vec<_>>())
+        .map(|coord| {
+            coord
+                .iter()
+                .map(|s| {
+                    let xy: Vec<&str> = s.split(',').collect::<Vec<_>>();
+                    (xy[0].parse::<i32>().unwrap(), xy[1].parse::<i32>().unwrap())
+                })
+                .collect::<Vec<_>>()
+        })
+        .collect::<Vec<_>>();
 
     let mut pairs: HashSet<(i32, i32)> = HashSet::new();
 
@@ -146,6 +142,6 @@ mod tests {
     fn part2() {
         let res = solve(&parse(&crate::library::read_file("testdata/day14.txt")));
         assert_eq!(res.1, 0);
-        println!("Part 1: Expected: 24, Actual: {}", res.1);
+        println!("Part 1: Expected: 93, Actual: {}", res.1);
     }
 }
