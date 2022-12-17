@@ -15,6 +15,7 @@ dirmod = "0.1.5"
 regex = "1.7.0"
 pathfinding = "4.0.0"
 serde_json = "1.0.89"
+hashbrown = "0.13.1"
 
 serde = { version = "1.0.150", features = ["derive"] }
 
