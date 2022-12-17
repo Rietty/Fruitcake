@@ -112,39 +112,39 @@ pub fn solve(data: &HashMap<String, Room>) -> (i32, i32) {
         data,
     );
 
-    // Print size of endroom_flowrates map.
-    println!("Size of endroom_flowrates map: {}", endroom_flowrates.len());
+    let good_rooms_names: HashSet<String> = good_rooms.keys().map(|x| x.to_string()).collect();
+    fill_missing_rooms(&good_rooms_names, &mut endroom_flowrates);
+    let good_rooms_names: HashSet<String> = good_rooms.keys().map(|x| x.to_string()).collect();
+    let mut p2 = 0;
 
-    // Call the fill_missing_rooms function.
-    fill_missing_rooms(&good_rooms, &mut endroom_flowrates);
+    // Iterate over the endroom_flowrates map, set the human to be the key.
+    for human in &endroom_flowrates {
+        // Create a set for the human that contains all the values in the hashset in the wrapper.
+        // Create a set from the good_rooms_names set, minus the human set, and the initial room (AA).
+        let elephant_set: HashSet<String> = good_rooms_names
+            .difference(&human.0 .0)
+            .filter(|x| x != &"AA")
+            .map(|x| x.to_string())
+            .collect();
 
-    // Print size of endroom_flowrates map.
-    println!("Size of endroom_flowrates map: {}", endroom_flowrates.len());
-
-    // Print the endroom_flowrates map by using an iterator to print the set as a string, and the flow-rate as an integer.
-    /*
-    for (k, v) in endroom_flowrates.iter() {
-        println!(
-            "{:?} -> {}",
-            k.0.iter().map(|x| x.to_string()).collect::<Vec<String>>(),
-            v
-        );
+        // Get the flow-rate for the elephant set + the flow-rate for the human set.
+        let flow = endroom_flowrates[&Wrapper(elephant_set)] + human.1;
+        p2 = std::cmp::max(p2, flow);
     }
-     */
 
-    (p1, 0)
+    (p1, p2)
 }
 
 // Function designed to cover any missing rooms in the endroom_flowrates map, that way we can easily compute part 2.
 pub fn fill_missing_rooms(
-    good_rooms: &HashMap<&String, &Room>,
+    good_rooms: &HashSet<String>,
     endroom_flowrates: &mut HashMap<Wrapper<String>, i32>,
 ) -> i32 {
-    // Set current to be the a set in which it is all the rooms that are in the good_rooms map, minus "AA".
+    // Set current to be the a set in which it is all the rooms that are in the good_rooms set, minus "AA".
     let current: HashSet<String> = good_rooms
-        .keys()
+        .iter()
+        .filter(|x| x != &"AA")
         .map(|x| x.to_string())
-        .filter(|x| x != "AA")
         .collect();
 
     // If that set is not present in the endroom_flowrates map, calculate the best flow-rate for that set and add it to the map.
@@ -156,7 +156,7 @@ pub fn fill_missing_rooms(
             subset.remove(room);
 
             // Get the flow-rate for the subset using a recursive call to the fill_missing_rooms function.
-            let flow = fill_missing_rooms(good_rooms, endroom_flowrates);
+            let flow = fill_missing_rooms(&subset, endroom_flowrates);
 
             // If the flow-rate is greater than the best flow-rate, set the best flow-rate to be the flow-rate.
             best_flow = std::cmp::max(best_flow, flow);
@@ -337,7 +337,7 @@ mod tests {
     #[test]
     fn part2() {
         let res = solve(&parse(&crate::library::read_file("testdata/day16.txt")));
-        assert_eq!(res.1, 0);
-        println!("Part 2: Expected: 0, Actual: {}", res.1);
+        assert_eq!(res.1, 1707);
+        println!("Part 2: Expected: 1707, Actual: {}", res.1);
     }
 }
