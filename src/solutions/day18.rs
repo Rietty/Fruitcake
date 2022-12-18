@@ -44,7 +44,8 @@ pub fn solve(data: &[(i32, i32, i32)]) -> (i32, i32) {
             // Pop off the first point in the queue.
             let (x, y, z) = queue.pop_front().unwrap();
 
-            // If the minimum is below -1 or maximum is above 25 for any of the x, y, z values then return false.
+            // If the minimum is below -1 or maximum is above 20 for any of the x, y, z values then return false.
+            // Basically just scanned input manually to find the highest/lowest value.
             if !(-1..=20).contains(&x) || !(-1..=20).contains(&y) || !(-1..=20).contains(&z) {
                 return false;
             }
