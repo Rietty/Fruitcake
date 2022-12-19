@@ -1,20 +1,20 @@
 // https://adventofcode.com/2022/day/18
 
 use std::collections::HashSet;
-use std::collections::VecDeque;
 
 pub fn solve(data: &[(i32, i32, i32)]) -> (i32, i32) {
-    // Return a vector of all adjacent points to a given point using a closure.
-    let adjacent = |(x, y, z): (i32, i32, i32)| {
-        vec![
-            (x - 1, y, z),
-            (x + 1, y, z),
-            (x, y - 1, z),
-            (x, y + 1, z),
-            (x, y, z - 1),
-            (x, y, z + 1),
-        ]
-    };
+    // Scan through the data and obtain the maximum and minimum value of any axis.
+    let min = data
+        .iter()
+        .fold((i32::MAX, i32::MAX, i32::MAX), |(x, y, z), (x1, y1, z1)| {
+            (x.min(*x1), y.min(*y1), z.min(*z1))
+        });
+
+    let max = data
+        .iter()
+        .fold((i32::MIN, i32::MIN, i32::MIN), |(x, y, z), (x1, y1, z1)| {
+            (x.max(*x1), y.max(*y1), z.max(*z1))
+        });
 
     // Iterate over the data vector and sum up the number of points that are adjacent to a given point but not in the data vector.
     let p1 = data
@@ -27,67 +27,62 @@ pub fn solve(data: &[(i32, i32, i32)]) -> (i32, i32) {
         })
         .sum::<usize>();
 
-    // Create a closure that will tell us if a specific cube area is boxed by other cubes.
-    let boxed = |(x, y, z): (i32, i32, i32)| -> bool {
-        // Create a queue of points.
-        let mut queue = VecDeque::new();
-        // Create a set of points.
-        let mut set = HashSet::new();
+    let visible = visible(data, min.0 as usize, max.0 as usize);
+    let p2 = data
+        .iter()
+        .flat_map(|point| adjacent(*point))
+        .filter(|p| visible.contains(p))
+        .count();
 
-        // Check if the x, y, z point is not in the visited and not in the original data vector, if both are true then add it to the queue and set.
-        if !data.contains(&(x, y, z)) && !set.contains(&(x, y, z)) {
-            queue.push_back((x, y, z));
-            set.insert((x, y, z));
-        }
+    (p1 as i32, p2 as i32)
+}
 
-        while !queue.is_empty() {
-            // Pop off the first point in the queue.
-            let (x, y, z) = queue.pop_front().unwrap();
+// Get all exposed/visible points to all cubes in a HashSet.
+pub fn visible(data: &[(i32, i32, i32)], min: usize, max: usize) -> HashSet<(i32, i32, i32)> {
+    let mut visible = HashSet::new();
+    let start_point = (0, 0, 0);
 
-            // If the minimum is below -1 or maximum is above 20 for any of the x, y, z values then return false.
-            // Basically just scanned input manually to find the highest/lowest value.
-            if !(-1..=20).contains(&x) || !(-1..=20).contains(&y) || !(-1..=20).contains(&z) {
-                return false;
+    let mut stack = Vec::new();
+    stack.push(start_point);
+
+    let mut visited = HashSet::new();
+    visited.insert(start_point);
+
+    while let Some(point) = stack.pop() {
+        // For each adjacent point..
+        for p in adjacent(point) {
+            // If the data contains the neighbour or the neighbour is not within the bounds of (min - 1, min - 1, min - 1) to (max + 1, max + 1, max + 1)..
+            if data.contains(&p)
+                || p.0 < min as i32 - 1
+                || p.1 < min as i32 - 1
+                || p.2 < min as i32 - 1
+                || p.0 > max as i32 + 1
+                || p.1 > max as i32 + 1
+                || p.2 > max as i32 + 1
+            {
+                continue;
             }
 
-            // For every adjacent point, add it using the same logic as above.
-            for (x, y, z) in adjacent((x, y, z)) {
-                if !data.contains(&(x, y, z)) && !set.contains(&(x, y, z)) {
-                    queue.push_back((x, y, z));
-                    set.insert((x, y, z));
-                }
-            }
-        }
-
-        true
-    };
-
-    // Create a set of points for all boxed in points.
-    let mut boxed_points = HashSet::new();
-
-    // Iterate over each x, y, z point from -1 to 20 and check if it is boxed in, if it is, add it to the boxed_points set.
-    for x in -1..=20 {
-        for y in -1..=20 {
-            for z in -1..=20 {
-                if boxed((x, y, z)) {
-                    boxed_points.insert((x, y, z));
-                }
+            if visited.insert(p) {
+                stack.push(p);
+                visible.insert(p);
             }
         }
     }
 
-    let mut p2 = 0;
+    visible
+}
 
-    // For every point in the initial data vector, get all of the neighbors, and if a neighbor is not in the boxed_points set or the original data vector, increment p2.
-    for (x, y, z) in data.iter() {
-        for (x, y, z) in adjacent((*x, *y, *z)) {
-            if !boxed_points.contains(&(x, y, z)) && !data.contains(&(x, y, z)) {
-                p2 += 1;
-            }
-        }
-    }
-
-    (p1 as i32, p2)
+// Get all adjacent points to a given point.
+pub fn adjacent((x, y, z): (i32, i32, i32)) -> Vec<(i32, i32, i32)> {
+    vec![
+        (x - 1, y, z),
+        (x + 1, y, z),
+        (x, y - 1, z),
+        (x, y + 1, z),
+        (x, y, z - 1),
+        (x, y, z + 1),
+    ]
 }
 
 pub fn parse(data: &[String]) -> Vec<(i32, i32, i32)> {
