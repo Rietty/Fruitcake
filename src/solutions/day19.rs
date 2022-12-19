@@ -28,9 +28,8 @@ pub fn solve(data: &[(i32, i32, i32, i32, i32, i32)]) -> (i32, i32) {
         .sum();
 
     // Solve Part 2. Take the first 3 blueprints and find their product over 32 minutes.
-    let p2: i32 = data
+    let p2: i32 = data[..3]
         .par_iter()
-        .take(3)
         .map(|&blueprint| process(blueprint, 32))
         .product();
 
