@@ -79,16 +79,6 @@ pub fn process((a, b, c, d, e, f): (i32, i32, i32, i32, i32, i32), time: i32) ->
     ));
 
     let mut res: i32 = 0;
-    let mut curr_max_blueprint: Blueprint = Blueprint {
-        ore: 0,
-        clay: 0,
-        obsidian: 0,
-        geode: 0,
-        rb_ore: 0,
-        rb_clay: 0,
-        rb_obsidian: 0,
-        rb_geode: 0,
-    };
 
     // Process the queue until it's empty.
     while let Some((t, blueprint)) = queue.pop_front() {
@@ -105,6 +95,18 @@ pub fn process((a, b, c, d, e, f): (i32, i32, i32, i32, i32, i32), time: i32) ->
 
         // Add the blueprint to the visited set.
         visited.insert(blueprint);
+
+        // Remove all elements from the queue which match the filter:
+        queue.retain(|(_, bp)| {
+            bp.ore > blueprint.ore
+                || bp.clay > blueprint.clay
+                || bp.obsidian > blueprint.obsidian
+                || bp.geode > blueprint.geode
+                || bp.rb_ore > blueprint.rb_ore
+                || bp.rb_clay > blueprint.rb_clay
+                || bp.rb_obsidian > blueprint.rb_obsidian
+                || bp.rb_geode > blueprint.rb_geode
+        });
 
         // Pruning:
         // Geode Robot: Make sure we have at least 1 Obsidian Robot. Make sure we have enough ore.

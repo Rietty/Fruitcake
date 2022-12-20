@@ -17,3 +17,8 @@ Advent of Code, 2022. Done in Rust.
 | 11  | :star: | :star: |
 | 12  | :star: | :star: |
 | 13  | :star: | :star: |
+| 14  | :star: | :star: |
+| 15  | :star: | :star: |
+| 16  | :star: | :star: |
+| 17  | :star: | :star: |
+| 18  | :star: | :star: |
