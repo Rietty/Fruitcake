@@ -118,7 +118,6 @@ pub fn process((a, b, c, d, e, f): (i32, i32, i32, i32, i32, i32), time: i32) ->
         }
 
         // Prune away excess resources.
-
         if blueprint.rb_ore >= ore_cost && blueprint.ore >= ore_cost {
             blueprint.ore = ore_cost;
         }
