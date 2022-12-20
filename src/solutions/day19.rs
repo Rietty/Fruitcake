@@ -81,7 +81,7 @@ pub fn process((a, b, c, d, e, f): (i32, i32, i32, i32, i32, i32), time: i32) ->
     let mut res: i32 = 0;
 
     // Process the queue until it's empty.
-    while let Some((t, blueprint)) = queue.pop_front() {
+    while let Some((t, mut blueprint)) = queue.pop_front() {
         // Need to check if we have passed or hit the time limit.
         if t >= time {
             res = max(res, blueprint.geode);
@@ -92,9 +92,6 @@ pub fn process((a, b, c, d, e, f): (i32, i32, i32, i32, i32, i32), time: i32) ->
         if visited.contains(&blueprint) {
             continue;
         }
-
-        // Add the blueprint to the visited set.
-        visited.insert(blueprint);
 
         // Remove all elements from the queue which match the filter:
         queue.retain(|(_, bp)| {
@@ -119,6 +116,24 @@ pub fn process((a, b, c, d, e, f): (i32, i32, i32, i32, i32, i32), time: i32) ->
         if (blueprint.geode + blueprint.rb_geode * (time - t) + (time - t)) <= res {
             continue;
         }
+
+        // Prune away excess resources.
+
+        if blueprint.rb_ore >= ore_cost && blueprint.ore >= ore_cost {
+            blueprint.ore = ore_cost;
+        }
+
+        if blueprint.rb_clay >= d && blueprint.ore >= ore_cost {
+            blueprint.ore = ore_cost;
+        }
+
+        if blueprint.rb_obsidian >= f && blueprint.ore >= ore_cost && blueprint.clay >= d {
+            blueprint.ore = ore_cost;
+            blueprint.clay = d;
+        }
+
+        // Add the blueprint to the visited set.
+        visited.insert(blueprint);
 
         // Need to make a robot which makes geodes, but don't bother if we don't have any obsidian robots.
         if blueprint.rb_obsidian >= 1 && blueprint.ore >= e && blueprint.obsidian >= f {
