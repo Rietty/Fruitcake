@@ -79,18 +79,22 @@ pub fn process((a, b, c, d, e, f): (i32, i32, i32, i32, i32, i32), time: i32) ->
     ));
 
     let mut res: i32 = 0;
+    let mut curr_max_blueprint: Blueprint = Blueprint {
+        ore: 0,
+        clay: 0,
+        obsidian: 0,
+        geode: 0,
+        rb_ore: 0,
+        rb_clay: 0,
+        rb_obsidian: 0,
+        rb_geode: 0,
+    };
 
     // Process the queue until it's empty.
     while let Some((t, blueprint)) = queue.pop_front() {
         // Need to check if we have passed or hit the time limit.
         if t >= time {
             res = max(res, blueprint.geode);
-            continue;
-        }
-
-        // Prune out based on: If geodes collected + geode robots * time remaining + T(time remaining) <= best total geodes found so far.
-        // This prune is thanks to a reddit comment.
-        if (blueprint.geode + blueprint.rb_geode * (time - t) + (time - t)) <= res {
             continue;
         }
 
@@ -107,6 +111,12 @@ pub fn process((a, b, c, d, e, f): (i32, i32, i32, i32, i32, i32), time: i32) ->
         // Obsidian Robot: Make sure we have at least 1 Clay Robot. Make sure we don't make more than the obsidian required by the Geode Robot.
         // Ore Robot: Make a maximum that is equal to the highest ore count required by any robot.
         // Clay Robot: Make sure we only make a maximum of the amount of clay required by an obsidian robot.
+
+        // Prune out based on: If geodes collected + geode robots * time remaining + T(time remaining) <= best total geodes found so far.
+        // This prune is thanks to a reddit comment.
+        if (blueprint.geode + blueprint.rb_geode * (time - t) + (time - t)) <= res {
+            continue;
+        }
 
         // Need to make a robot which makes geodes, but don't bother if we don't have any obsidian robots.
         if blueprint.rb_obsidian >= 1 && blueprint.ore >= e && blueprint.obsidian >= f {
