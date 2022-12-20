@@ -264,7 +264,7 @@ mod tests {
     #[test]
     fn part2() {
         let res = solve(&parse(&crate::library::read_file("data/day19.txt")));
-        assert_eq!(res.1, 0);
+        assert_eq!(res.1, 62);
         println!("Part 2: Expected: 62, Actual: {}", res.1);
     }
 }
