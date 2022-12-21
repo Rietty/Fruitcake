@@ -1,0 +1,161 @@
+#[allow(unused_imports)]
+use std::fs::File;
+use std::io::{self, BufRead};
+use std::path::Path;
+use std::collections::{HashMap, VecDeque};
+
+#[derive(Debug, Clone)]
+pub struct Monkey {
+    name: String,
+    value: Option<i128>,
+    op: Option<char>,
+    requirements: Option<(String, String)>
+}
+
+// This function is designed to basically do both parts, based on if we pass a value to the human or not.
+// Part 2 is basically just an extension of part 1, but we call the function by changing the human value using a binary search.
+pub fn calculate(data: &mut VecDeque<Monkey>, human: Option<i128>) -> (i128, i128, bool) {
+    // Create a lookup HashMap which will contain the values of each given key/monkey.
+    let mut lookup: HashMap<String, i128> = HashMap::new();
+    let (mut left, mut right) = (String::new(), String::new());
+
+    // We need to loop while the lookup table does not contain the root key..
+    while !lookup.contains_key("root") {
+        // Iterate over the data deque... 
+        for monkey in data.iter_mut() {
+            // Check to see if we have they current monkey's name be "humn"..
+            if monkey.name == "humn" && human != None {
+                lookup.insert("humn".to_string(), human.unwrap());
+            }
+
+            // If the monkey name is root, and both the sub-keys are in database we can return info..
+            if monkey.name == "root" {
+                let requirements = monkey.requirements.as_ref().unwrap();
+                left = requirements.0.to_string();
+                right = requirements.1.to_string();
+                if lookup.contains_key(&left) && lookup.contains_key(&right) {
+                    return (*lookup.get(&left).unwrap(), *lookup.get(&right).unwrap(), lookup.get(&requirements.0).unwrap() == lookup.get(&requirements.1).unwrap());
+                }
+            }
+
+            // If the name is not contained in keys... we need to do the operation..
+            if !lookup.contains_key(&monkey.name) {
+                if monkey.op != None {
+                    // Grab requirements..
+                    let requirements = monkey.requirements.as_ref().unwrap();
+                    if lookup.contains_key(&requirements.0) && lookup.contains_key(&requirements.1) {
+                        match monkey.op.unwrap() {
+                            '+' => { lookup.insert(monkey.name.clone(), lookup.get(&requirements.0).unwrap() + lookup.get(&requirements.1).unwrap()); },
+                            '-' => { lookup.insert(monkey.name.clone(), lookup.get(&requirements.0).unwrap() - lookup.get(&requirements.1).unwrap()); },
+                            '*' => { lookup.insert(monkey.name.clone(), lookup.get(&requirements.0).unwrap() * lookup.get(&requirements.1).unwrap()); },
+                            '/' => { lookup.insert(monkey.name.clone(), lookup.get(&requirements.0).unwrap() / lookup.get(&requirements.1).unwrap()); },
+                            _ => {}
+                        }
+                    }
+                } else {
+                    lookup.insert(monkey.name.clone(), monkey.value.unwrap());
+                }
+            } 
+        }
+    }
+
+    (*lookup.get(&left).unwrap(), *lookup.get(&right).unwrap(), false)
+}
+
+pub fn solve(data: &mut VecDeque<Monkey>) -> (i128, i128) {
+    // Part 1.    
+    let (a, b, _) = calculate(data, None);
+    let p1 = a + b;
+
+    // Part 2. Calculate an upper and lower-bound and then hone-in on answer.
+    let (mut lower, mut upper): (i128, i128) = (0, 0);
+    for i in 1..20 {
+        upper = i128::pow(10, i);
+        let (a, b, _) = calculate(data, Some(upper));
+        if a - b < 0 {
+            break;
+        } else {
+            lower = upper;
+        }
+    }
+
+    let mut p2: i128 = 0;
+    let mut res: i128 = -1;
+
+    while res != 0 {
+        p2 = lower + ((upper - lower) / 2);
+        let (a, b, _) = calculate(data, Some(p2));
+        res = a - b;
+        if res > 0 {
+            lower = p2;
+        } else if res < 0 {
+            upper = p2;
+        }
+    }
+
+    (p1, p2)
+}
+
+pub fn parse(data: &[String]) -> VecDeque<Monkey> {
+    // Create a new monkey dequeue I can add/pop off and remove from specific points.
+    let mut monkeys: VecDeque<Monkey> = VecDeque::new();
+
+    // Iterate through the data and add each monkeys info into the vector, depending on if it has specific amount of entries in the line or not.
+    for line in data {
+        let info = line.split_whitespace().collect::<Vec<_>>();
+
+        // Depending on how many items are in the vector, we do different things.
+        match info.len() {
+            2 => {
+                let n = info[0].trim_matches(':').to_string();
+                let v = info[1].parse::<i128>().unwrap();
+                monkeys.push_back(Monkey {
+                    name: n,
+                    value: Some(v),
+                    op: None,
+                    requirements: None
+                });
+            },
+            4 => {
+                let n = info[0].trim_matches(':').to_string();
+                let o = info[2].chars().next().unwrap();
+                let a = info[1].to_string();
+                let b = info[3].to_string();
+                monkeys.push_back(Monkey {
+                    name: n,
+                    value: None,
+                    op: Some(o),
+                    requirements: Some((a, b))
+                });
+            },
+            _ => {}
+        }
+    }
+
+    monkeys
+}
+
+pub fn run() {
+    let res = solve(&mut parse(&read_file("data/input.txt")));
+    println!("Day 14:\nStar 1: {}\nStar 2: {}\n", res.0, res.1);
+}
+
+fn main() {
+    run();
+}
+
+// Read a file from a given path and return a vector of strings.
+pub fn read_file(path: &str) -> Vec<String> {
+    if let Ok(lines) = read_lines(path) {
+        lines.map(|line| line.unwrap()).collect()
+    } else {
+        panic!("Could not read file: {}", path);
+    }
+}
+
+// Read lines from a file at a given file-name.
+// Open file relative to the base directory of the project.
+fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>> where P: AsRef<Path>, {
+    let file = File::open(filename)?;
+    Ok(io::BufReader::new(file).lines())
+}
