@@ -75,6 +75,6 @@ mod tests {
     fn part2() {
         let res = solve(&parse(&crate::library::read_file("testdata/day20.txt")));
         assert_eq!(res.1, 1623178306);
-        println!("Part 1: Expected: 1623178306, Actual: {}", res.0);
+        println!("Part 2: Expected: 1623178306, Actual: {}", res.0);
     }
 }
