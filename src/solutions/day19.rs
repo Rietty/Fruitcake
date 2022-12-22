@@ -256,14 +256,14 @@ mod tests {
 
     #[test]
     fn part1() {
-        let res = solve(&parse(&crate::library::read_file("data/day19.txt")));
+        let res = solve(&parse(&crate::library::read_file("testdata/day19.txt")));
         assert_eq!(res.0, 33);
         println!("Part 1: Expected: 33, Actual: {}", res.0);
     }
 
     #[test]
     fn part2() {
-        let res = solve(&parse(&crate::library::read_file("data/day19.txt")));
+        let res = solve(&parse(&crate::library::read_file("testdata/day19.txt")));
         assert_eq!(res.1, 62);
         println!("Part 2: Expected: 62, Actual: {}", res.1);
     }
