@@ -17,10 +17,29 @@ pub fn solve(data: &VecDeque<Monkey>) -> (i128, i128) {
 
     // Part 2. Calculate an upper and lower-bound and then hone-in on answer.
     let (mut lower, mut upper): (i128, i128) = (0, 0);
-    for i in 1..20 {
+
+    let (m1, m2, _) = calculate(data, Some(0));
+    let (m3, m4, _) = calculate(data, Some(100));
+
+    #[allow(unused_assignments)]
+    let mut increasing: bool = false;
+
+    if m1 - m2 >= m3 - m4 {
+        increasing = false;
+    } else {
+        increasing = true;
+    }
+
+    for i in 0..20 {
         upper = i128::pow(10, i);
         let (a, b, _) = calculate(data, Some(upper));
-        if a - b < 0 {
+        if !increasing {
+            if a - b < 0 {
+                break;
+            } else {
+                lower = upper;
+            }
+        } else if a - b > 0 {
             break;
         } else {
             lower = upper;
@@ -35,9 +54,23 @@ pub fn solve(data: &VecDeque<Monkey>) -> (i128, i128) {
         let (a, b, _) = calculate(data, Some(p2));
         res = a - b;
         match a.cmp(&b) {
-            std::cmp::Ordering::Greater => lower = p2,
-            std::cmp::Ordering::Equal => break,
-            std::cmp::Ordering::Less => upper = p2,
+            std::cmp::Ordering::Greater => {
+                if increasing {
+                    upper = p2;
+                } else {
+                    lower = p2;
+                }
+            }
+            std::cmp::Ordering::Equal => {
+                break;
+            }
+            std::cmp::Ordering::Less => {
+                if increasing {
+                    lower = p2;
+                } else {
+                    upper = p2;
+                }
+            }
         }
     }
 
