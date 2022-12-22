@@ -34,10 +34,10 @@ pub fn solve(data: &VecDeque<Monkey>) -> (i128, i128) {
         p2 = lower + ((upper - lower) / 2);
         let (a, b, _) = calculate(data, Some(p2));
         res = a - b;
-        if res > 0 {
-            lower = p2;
-        } else if res < 0 {
-            upper = p2;
+        match a.cmp(&b) {
+            std::cmp::Ordering::Greater => lower = p2,
+            std::cmp::Ordering::Equal => break,
+            std::cmp::Ordering::Less => upper = p2,
         }
     }
 
