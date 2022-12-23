@@ -148,7 +148,7 @@ mod tests {
     #[test]
     fn part2() {
         let res = solve(&mut parse(&crate::library::read_file("testdata/day23.txt")));
-        assert_eq!(res.1, 0);
-        println!("Part 2: Expected: 0, Actual: {}", res.1);
+        assert_eq!(res.1, 20);
+        println!("Part 2: Expected: 20, Actual: {}", res.1);
     }
 }
