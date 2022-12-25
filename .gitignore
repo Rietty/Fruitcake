@@ -11,3 +11,12 @@ Cargo.lock
 
 # VSCode	
 .vscode/
+
+# Any python files
+*.py
+
+# Session files
+session.cookie
+
+# Ignore the AoCTiles folder.
+AoCTiles/

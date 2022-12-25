@@ -29,11 +29,13 @@ mod tests {
     fn part1() {
         let res = solve(&parse(&crate::library::read_file("testdata/dayXX.txt")));
         assert_eq!(res.0, 0);
+        println!("Part 1: Expected: 0, Actual: {}", res.0);
     }
 
     #[test]
     fn part2() {
         let res = solve(&parse(&crate::library::read_file("testdata/dayXX.txt")));
         assert_eq!(res.1, 0);
+        println!("Part 2: Expected: 0, Actual: {}", res.1);
     }
 }
