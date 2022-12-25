@@ -1,6 +1,8 @@
 // https://adventofcode.com/2022/day/24
 
+#[allow(unused_imports)]
 use hashbrown::HashSet;
+#[allow(unused_imports)]
 use std::collections::VecDeque;
 
 pub fn solve(data: &Vec<Vec<char>>) -> (i32, i32) {
@@ -16,9 +18,8 @@ pub fn solve(data: &Vec<Vec<char>>) -> (i32, i32) {
 
 // Simply use a BFS to find the shortest path between the start and end points.
 // Since the blizzards are periodic, we will know exactly if there is a blizzard at any given point or not.
-pub fn calculate(data: &Vec<Vec<char>>, timestep: i32, start: (i32, i32), end: (i32, i32)) -> i32 {
-    // Create a wall hashset to store the walls.
-    let mut walls = std::collections::HashSet::new();
+pub fn calculate(_data: &[Vec<char>], _timestep: i32, _start: (i32, i32), _end: (i32, i32)) -> i32 {
+    0
 }
 
 pub fn parse(data: &[String]) -> Vec<Vec<char>> {
