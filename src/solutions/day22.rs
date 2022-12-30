@@ -14,6 +14,8 @@ pub fn solve(data: &(Vec<String>, Vec<Instruction>)) -> (i32, i32) {
     // Calculate the password for the map and the instructions, for part 1.
     let p1 = calculate_password(map.to_vec(), instructions.to_vec());
 
+    // P2 was done in Python, so we will just return 0 for now.
+
     (p1, 0)
 }
 

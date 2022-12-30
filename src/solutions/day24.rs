@@ -6,14 +6,8 @@ use hashbrown::HashSet;
 use std::collections::VecDeque;
 
 pub fn solve(data: &Vec<Vec<char>>) -> (i32, i32) {
-    // Get the size of the grid.
-    let n = data.len();
-    let m = data[0].len();
-
-    // Solve part 1.
-    let p1 = calculate(data, 0, (0, 1), (n as i32 - 1, m as i32 - 2));
-
-    (p1, 0)
+    // This day was done in Python, code to be ported.
+    (0, 0)
 }
 
 // Simply use a BFS to find the shortest path between the start and end points.
