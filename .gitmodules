@@ -1,0 +1,3 @@
+[submodule "submodules/sled"]
+	path = submodules/sled
+	url = https://github.com/Rietty/Sled.git
